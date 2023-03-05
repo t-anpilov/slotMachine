@@ -1,0 +1,27 @@
+.App {
+  padding-left: 2.0em;
+}
+
+.machine {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.gridPanel {
+  margin: auto;
+  padding-top: 20px;
+  width: 30%;
+  display: grid;
+  grid-template-columns: 33% 34% 33%;  
+}
+
+.slotItem {
+  font-size: 1.8em;
+  padding: 0.33em 0em 0.33em 0em;
+  border: 1px dashed grey;
+}
+
+button {
+  font-size: 1.1em;
+  padding: 0.2em;
+}
