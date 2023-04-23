@@ -1,11 +1,30 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Reel } from './models/Reel'
+import { increaseBalance, reduceBalance } from "./features/balanceSlice"
 
-export const Machine: React.FC = () => {
+type machineProps = {
+    
+}
+
+export const Machine: React.FC<machineProps> = props => {
    
     const [lines, setLines] = useState<string[][]>([]);
 
-    const randomId = () => Math.round( (Math.random()*100000) ).toString()
+    const randomId = () => Math.round( (Math.random()*100000) ).toString();
+
+    const lineSize = 6;
+
+    const dispatch = useDispatch();
+
+    const handleIncreaseBalance = (incrementValue: number) => {            
+        dispatch(increaseBalance(incrementValue)); 
+    };
+
+    const handleReduceBalance = (decrementValue: number) => {            
+        dispatch(reduceBalance(decrementValue)); 
+    };
+
     
     const displayLine = (someReel: Reel) => {
 
@@ -13,19 +32,31 @@ export const Machine: React.FC = () => {
         
         if (someReel) {
             someReel.spin();
-            const length = someReel.symbols.length;
+            const length = someReel.symbols.length;            
 
-            if (someReel.position != null) {                 
+            if (someReel.position != null) {
                 
-                for (let i=0; i<3; i++) {  
-                    let newSlot = Object.create(someReel); 
-                    newSlot.position = someReel.position + i - 1;
-                    if (newSlot.position < 0) newSlot.position = length -1;
-                    if (newSlot.position > length-1) newSlot.position = 0;
-                    console.log(newSlot.position);
+                let currentPostion = someReel.position
+                let positions: number[] = [currentPostion];
+
+                for (let i=0; i<(lineSize-1); i++) {
+                    ++currentPostion
+
+                    if (currentPostion < length) {
+                        positions.push(currentPostion);
+                    } else {
+                        currentPostion = 0
+                        positions.push(currentPostion)
+                    }                    
+                } 
+                console.log(positions) 
+
+                for (let i=0; i<lineSize; i++) {
+                    let newSlot = Object.create(someReel);
+                    newSlot.position = positions[i];
                     result.push( someReel.display.call(newSlot) );
                 }
-                console.log(result);
+
                 return result;
 
             }          
@@ -49,7 +80,7 @@ export const Machine: React.FC = () => {
             { line.map(item => {
                 return (
                     <div key={ randomId() } className="slotItem">
-                        {String.fromCharCode(Number(item))}
+                        <div> {String.fromCharCode(Number(item))} </div>
                     </div>
                 )
             }) }
@@ -63,13 +94,18 @@ export const Machine: React.FC = () => {
 
     return (
         <div className='machine'>
-            <button onClick={makeSpin}>SPIN</button>
+            <button onClick={()=>handleReduceBalance(1)}>-</button>
+            
+            <button onClick={makeSpin}>SPIN</button>  
+
+            <button onClick={()=>handleIncreaseBalance(1)}>+</button>
+                      
             <div className='gridPanel'>
 
                 {
                     lines.map(line => {
                         return (
-                            <div key={ randomId() }>
+                            <div key={ randomId() } className="line">
                                 { displayedLine(line) }
                             </div>
                         )
