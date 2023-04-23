@@ -9,7 +9,7 @@ export const Score: React.FC = () => {
   );
 
   return (
-      <div className="">
+      <div className="scorePanel">
         <div>
         {userState.balance}
         </div>        
