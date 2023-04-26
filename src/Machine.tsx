@@ -25,6 +25,33 @@ export const Machine: React.FC<machineProps> = props => {
         dispatch(reduceBalance(decrementValue)); 
     };
 
+    const checkWin = (linesArray: any[][]) => {
+        let workArray: any[][] = [];
+        let winCoeficient = 0;
+
+        for (let i=0; i<linesArray.length; i++) {
+            workArray[i] = [...linesArray[i]];
+            workArray[i].splice(3,3);
+        };
+        console.log (workArray)
+        for (let i=0; i<workArray.length; i++) {
+            if (workArray[0][i] === workArray[1][i] &&  workArray[0][i] === workArray[2][i]) {
+                winCoeficient += 4
+            } else if (workArray[0][i] === workArray[1][i] || workArray[1][i] === workArray[2][i]) {
+                winCoeficient += 2
+            } else if (workArray[0][i] === workArray[2][i]) {
+                winCoeficient += 1
+            }
+        }
+
+        console.log  ( winCoeficient )
+        handleReduceBalance(10);
+        setTimeout(() => {
+            handleIncreaseBalance(winCoeficient*10) 
+        }, 750);   
+
+    }
+
     
     const displayLine = (someReel: Reel) => {
 
@@ -48,8 +75,7 @@ export const Machine: React.FC<machineProps> = props => {
                         currentPostion = 0
                         positions.push(currentPostion)
                     }                    
-                } 
-                console.log(positions) 
+                }               
 
                 for (let i=0; i<lineSize; i++) {
                     let newSlot = Object.create(someReel);
@@ -72,6 +98,8 @@ export const Machine: React.FC<machineProps> = props => {
             let reel = new Reel();
             if(reel) newLines.push(displayLine(reel));            
         }
+        console.log(newLines);
+        checkWin(newLines);
         setLines(newLines);
     }
     
@@ -94,11 +122,7 @@ export const Machine: React.FC<machineProps> = props => {
 
     return (
         <div className='machine'>
-            <button onClick={()=>handleReduceBalance(1)}>-</button>
-            
-            <button onClick={makeSpin}>SPIN</button>  
-
-            <button onClick={()=>handleIncreaseBalance(1)}>+</button>
+            <button onClick={makeSpin}>SPIN</button> 
                       
             <div className='gridPanel'>
 
