@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Reel } from './models/Reel'
 import { increaseBalance, reduceBalance } from "./features/balanceSlice"
 
@@ -91,7 +91,7 @@ export const Machine: React.FC<machineProps> = props => {
         return ['','','']
     } 
 
-    const makeSpin = () => {
+    const makeSpin = (changeBalance: boolean) => {
         let newLines = []
         
         for (let i=0; i<3; i++) {
@@ -99,7 +99,7 @@ export const Machine: React.FC<machineProps> = props => {
             if(reel) newLines.push(displayLine(reel));            
         }
         console.log(newLines);
-        checkWin(newLines);
+        if(changeBalance) checkWin(newLines);
         setLines(newLines);
     }
     
@@ -115,14 +115,18 @@ export const Machine: React.FC<machineProps> = props => {
         </React.Fragment>
     )
     
-
-    useEffect(()=> { makeSpin() }, []);  
-
-
+           
+    useEffect(()=> { 
+        makeSpin(false);
+        
+        return () => {
+            setLines([])
+        }
+     }, []); 
 
     return (
         <div className='machine'>
-            <button onClick={makeSpin}>SPIN</button> 
+            <button onClick={() => makeSpin(true)}>SPIN</button> 
                       
             <div className='gridPanel'>
 
